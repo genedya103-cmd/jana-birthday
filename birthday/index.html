@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Jana Birthday 🎂</title>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Pinyon+Script&family=Fredoka+One&family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet"/>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{
+      background:#f06292;
+      font-family:'Great Vibes',cursive;
+      overflow:hidden;
+      width:100vw;height:100vh;
+      display:flex;align-items:center;justify-content:center;
+    }
+    canvas{position:fixed;inset:0;pointer-events:none;z-index:0;}
+    #scene{
+      position:relative;z-index:1;
+      display:flex;flex-direction:column;
+      align-items:center;justify-content:center;
+      width:100%;height:100%;
+      gap:0;
+    }
+    #cakeWrap{
+      position:relative;
+      width:200px;height:220px;
+      margin-bottom:10px;
+      cursor:pointer;
+    }
+    /* text fade-in after intro */
+    .bday-text, .name-text{ opacity:0; }
+    .bday-text.show{ animation:fadeUp .8s ease forwards; }
+    .name-text.show { animation:fadeUp .8s ease .4s forwards; }
+    .bday-text{
+      font-family:'Great Vibes',cursive;
+      font-size:clamp(2.2rem,6vw,3.2rem);
+      color:#b71c1c;
+      text-align:center;
+      line-height:1.3;
+      text-shadow:1px 2px 4px rgba(0,0,0,0.15);
+      margin-top:10px;
+    }
+    .name-text{
+      font-family:'Pinyon Script',cursive;
+      font-size:clamp(2.8rem,8vw,4.2rem);
+      color:#b71c1c;
+      text-align:center;
+      line-height:1;
+      text-shadow:1px 2px 6px rgba(0,0,0,0.15);
+    }
+    #countWrap{
+      margin-top:18px;
+      text-align:center;
+    }
+    #countLabel{
+      font-family:'Great Vibes',cursive;
+      font-size:1.3rem;
+      color:#7b1fa2;
+    }
+    #countNum{
+      font-family:'Great Vibes',cursive;
+      font-size:5rem;
+      color:#b71c1c;
+      line-height:1;
+      transition:transform .2s;
+    }
+    #blowBtn{
+      display:none;
+      margin-top:15px;
+      padding:14px 40px;
+      font-family:'Great Vibes',cursive;
+      font-size:1.6rem;
+      background:#b71c1c;
+      color:#fff;
+      border:none;border-radius:50px;
+      cursor:pointer;
+      box-shadow:0 4px 20px rgba(183,28,28,0.4);
+      transition:transform .2s;
+    }
+    #blowBtn:hover{transform:scale(1.05);}
+    #wishSection{
+      display:none;
+      flex-direction:column;
+      align-items:center;
+      gap:12px;
+      margin-top:15px;
+      animation:fadeUp .8s ease forwards;
+    }
+    #wishSection.show{display:flex;}
+    #wishSection h2{
+      font-family:'Great Vibes',cursive;
+      font-size:2rem;color:#7b1fa2;
+    }
+    #wishInput{
+      width:280px;min-height:80px;
+      background:rgba(255,255,255,0.5);
+      border:2px solid #e91e63;
+      border-radius:15px;
+      padding:12px 15px;
+      font-family:'Great Vibes',cursive;
+      font-size:1.2rem;
+      color:#880e4f;
+      resize:none;outline:none;
+    }
+    #wishInput::placeholder{color:rgba(136,14,79,0.5);}
+    #sendBtn{
+      padding:12px 35px;
+      font-family:'Great Vibes',cursive;
+      font-size:1.4rem;
+      background:#e91e63;color:#fff;
+      border:none;border-radius:50px;cursor:pointer;
+      box-shadow:0 4px 15px rgba(233,30,99,0.4);
+    }
+    #wishDone{
+      display:none;
+      font-family:'Great Vibes',cursive;
+      font-size:1.8rem;color:#7b1fa2;
+      text-align:center;
+      animation:fadeUp .8s ease forwards;
+    }
+    #musicBtn{
+      position:fixed;bottom:20px;right:20px;
+      width:48px;height:48px;border-radius:50%;
+      background:#b71c1c;color:#fff;
+      border:none;font-size:1.3rem;cursor:pointer;
+      box-shadow:0 4px 15px rgba(183,28,28,0.4);
+      display:flex;align-items:center;justify-content:center;
+      z-index:999;
+    }
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
+    /* PAGE 2 */
+    #page2{
+      display:none;
+      position:fixed;inset:0;
+      background:linear-gradient(135deg,#fce4ec 0%,#f48fb1 25%,#f06292 50%,#fce4ec 75%,#f8bbd0 100%);
+      background-size:400% 400%;
+      animation:gradientShift 8s ease infinite;
+      overflow-y:auto;
+      z-index:100;
+      flex-direction:column;
+      align-items:center;
+      padding-bottom:60px;
+    }
+    @keyframes gradientShift{
+      0%{background-position:0% 50%;}
+      50%{background-position:100% 50%;}
+      100%{background-position:0% 50%;}
+    }
+    #page2.show{display:flex;}
+    .bunting{width:100%;height:60px;position:relative;overflow:hidden;}
+    .bunting svg{width:100%;height:60px;}
+    .hb-wrap{text-align:center;margin-top:10px;position:relative;}
+    .hb-happy{
+      font-family:'Fredoka One',cursive;
+      font-size:clamp(3.5rem,15vw,7rem);
+      color:white;-webkit-text-stroke:3px #333;
+      line-height:1;display:inline-block;position:relative;
+    }
+    .hb-birthday{
+      font-family:'Fredoka One',cursive;
+      font-size:clamp(3rem,13vw,6rem);
+      color:#e53935;-webkit-text-stroke:3px #333;
+      line-height:1;display:block;
+    }
+    .date-badge{
+      display:inline-flex;align-items:center;gap:10px;
+      background:linear-gradient(135deg,#ff6b6b,#feca57);
+      color:#fff;
+      font-family:'Fredoka One',cursive;font-size:1.2rem;
+      padding:10px 30px;border-radius:50px;margin-top:15px;
+      box-shadow:0 4px 15px rgba(255,107,107,0.4);
+    }
+    .profile-wrap{margin-top:30px;position:relative;width:180px;height:180px;}
+    .profile-ring{
+      position:absolute;inset:-6px;border-radius:50%;
+      background:conic-gradient(#ff6b6b,#feca57,#48dbfb,#ff9ff3,#ff6b6b);
+      animation:spin2 4s linear infinite;
+    }
+    @keyframes spin2{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+    .profile-ring2{position:absolute;inset:-3px;border-radius:50%;background:#fff9c4;}
+    .profile-circle{
+      position:relative;z-index:1;
+      width:180px;height:180px;border-radius:50%;overflow:hidden;
+    }
+    .profile-circle img{width:100%;height:100%;object-fit:cover;}
+    .heart-float{
+      position:absolute;font-size:1.2rem;
+      animation:floatHeart 2s ease-in-out infinite;
+    }
+    @keyframes floatHeart{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-10px) scale(1.2);}}
+    .msg-card{
+      margin-top:30px;width:90%;max-width:500px;
+      background:rgba(255,255,255,0.85);
+      backdrop-filter:blur(10px);
+      border-radius:25px;padding:30px 25px;
+      box-shadow:0 8px 30px rgba(255,107,107,0.2);
+      border:2px solid rgba(255,107,107,0.3);position:relative;
+    }
+    .msg-card::before{
+      content:'💌';position:absolute;top:-20px;left:50%;
+      transform:translateX(-50%);font-size:2rem;
+      background:white;padding:0 10px;
+    }
+    .msg-text{
+      font-family:'Tajawal',sans-serif;font-size:1.15rem;
+      color:#5d4037;line-height:2.2;text-align:center;font-weight:500;
+    }
+    .msg-text .hl{
+      background:linear-gradient(135deg,#ff6b6b,#feca57);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      font-weight:900;font-size:1.25rem;
+    }
+    .msg-hearts{text-align:center;font-size:1.5rem;margin-top:15px;letter-spacing:5px;animation:heartbeat2 1.5s ease infinite;}
+    @keyframes heartbeat2{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
+  </style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<!-- شاشة البداية -->
+<div id="startScreen" style="
+  position:fixed;inset:0;z-index:999;
+  background:linear-gradient(135deg,#fce4ec,#f48fb1,#e91e63);
+  background-size:400% 400%;
+  animation:gradientShift 6s ease infinite;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:16px;
+  text-align:center;
+  padding:20px;
+">
+  <canvas id="startCanvas" style="position:absolute;inset:0;pointer-events:none;"></canvas>
+
+  <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:16px;">
+    <div style="font-size:4rem;animation:heartbeat2 1.4s ease-in-out infinite;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.2));">🎂</div>
+
+    <div id="startTyped" style="
+      font-family:'Great Vibes',cursive;
+      font-size:clamp(1.6rem,6vw,2.6rem);
+      color:#fff;
+      text-shadow:0 2px 12px rgba(0,0,0,0.2);
+      min-height:3.5rem;
+      line-height:1.4;
+    "></div>
+
+    <button id="startBtn" onclick="startExperience()" style="
+      opacity:0;
+      transition:opacity .8s ease;
+      margin-top:8px;
+      padding:18px 55px;
+      font-family:'Great Vibes',cursive;
+      font-size:1.8rem;
+      background:#fff;
+      color:#c2185b;
+      border:none;border-radius:50px;
+      cursor:pointer;
+      box-shadow:0 6px 25px rgba(0,0,0,0.25);
+      animation:heartbeat2 1.5s ease infinite;
+    ">🎀 تعالي نحضر التورتة 🎀</button>
+  </div>
+</div>
+
+<!-- INTRO CANVAS — تورتة + دبانة -->
+<canvas id="introCanvas" style="position:fixed;inset:0;z-index:50;pointer-events:none;"></canvas>
+
+<div id="scene" style="opacity:0;pointer-events:none;">
+  <!-- CAKE -->
+  <div id="cakeWrap">
+    <svg id="cakeSvg" viewBox="0 0 200 220" width="200" height="220" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="gL1" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#f48fb1"/><stop offset="100%" stop-color="#880e4f"/>
+        </linearGradient>
+        <linearGradient id="gL2" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#f06292"/><stop offset="100%" stop-color="#ad1457"/>
+        </linearGradient>
+        <linearGradient id="gL3" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#f48fb1"/><stop offset="100%" stop-color="#c2185b"/>
+        </linearGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="2.5" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <!-- ظل القاعدة -->
+      <ellipse cx="100" cy="210" rx="88" ry="8" fill="#f8bbd0" opacity=".5"/>
+
+      <!-- طبقة 3 سفلى -->
+      <rect x="10" y="148" width="180" height="58" rx="12" fill="url(#gL3)"/>
+      <!-- موجة كريمة -->
+      <path d="M10,153 Q22,137 34,153 Q46,137 58,153 Q70,137 82,153 Q94,137 106,153 Q118,137 130,153 Q142,137 154,153 Q166,137 178,153 Q190,137 190,153" stroke="white" stroke-width="2.5" fill="none" opacity=".6"/>
+      <!-- زخارف — نجوم وقلوب -->
+      <text x="35"  y="181" text-anchor="middle" font-size="13" fill="white" opacity=".85">✦</text>
+      <text x="65"  y="175" text-anchor="middle" font-size="11" fill="#fff9c4" opacity=".85">♥</text>
+      <text x="100" y="182" text-anchor="middle" font-size="13" fill="white" opacity=".85">✦</text>
+      <text x="135" y="175" text-anchor="middle" font-size="11" fill="#fff9c4" opacity=".85">♥</text>
+      <text x="165" y="181" text-anchor="middle" font-size="13" fill="white" opacity=".85">✦</text>
+
+      <!-- طبقة 2 وسط -->
+      <rect x="24" y="100" width="152" height="52" rx="10" fill="url(#gL2)"/>
+      <path d="M24,105 Q35,90 46,105 Q57,90 68,105 Q79,90 90,105 Q101,90 112,105 Q123,90 134,105 Q145,90 156,105 Q167,90 176,105" stroke="white" stroke-width="2.5" fill="none" opacity=".6"/>
+      <text x="55"  y="128" text-anchor="middle" font-size="11" fill="white" opacity=".85">✦</text>
+      <text x="100" y="132" text-anchor="middle" font-family="'Great Vibes',cursive" font-size="17" fill="white" opacity=".95">Jana</text>
+      <text x="145" y="128" text-anchor="middle" font-size="11" fill="white" opacity=".85">✦</text>
+
+      <!-- طبقة 1 علوية -->
+      <rect x="40" y="60" width="120" height="44" rx="8" fill="url(#gL1)"/>
+      <path d="M40,65 Q51,51 62,65 Q73,51 84,65 Q95,51 106,65 Q117,51 128,65 Q139,51 150,65 Q161,51 160,65" stroke="white" stroke-width="2.5" fill="none" opacity=".6"/>
+      <text x="68"  y="87" text-anchor="middle" font-size="10" fill="#fff9c4" opacity=".9">♥</text>
+      <text x="100" y="89" text-anchor="middle" font-size="12" fill="white" opacity=".9">✦</text>
+      <text x="132" y="87" text-anchor="middle" font-size="10" fill="#fff9c4" opacity=".9">♥</text>
+
+      <!-- شمعة -->
+      <rect x="93" y="28" width="14" height="36" rx="3" fill="#fff9c4" stroke="#f48fb1" stroke-width="1.5"/>
+      <line x1="93" y1="38" x2="107" y2="38" stroke="#ffcc80" stroke-width="1.2" opacity=".6"/>
+      <line x1="93" y1="48" x2="107" y2="48" stroke="#ffcc80" stroke-width="1.2" opacity=".6"/>
+
+      <!-- لهب -->
+      <g id="flame" filter="url(#glow)">
+        <ellipse cx="100" cy="20" rx="6" ry="10" fill="#FFA726"/>
+        <ellipse cx="100" cy="22" rx="3.5" ry="6" fill="#FFF176"/>
+        <ellipse cx="100" cy="24" rx="1.5" ry="3" fill="white" opacity=".8"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="bday-text" id="bdayText"></div>
+  <div class="name-text" id="nameText"></div>
+
+  <div id="countWrap" style="opacity:0;transition:opacity .5s;">
+    <div id="countLabel">✨ make a wish in...</div>
+    <div id="countNum">5</div>
+  </div>
+
+  <button id="blowBtn" onclick="blowCandle()">💨 طفي الشمعه يا جنجونتي</button>
+
+  <div id="wishSection">
+    <h2>🌟 اتمني امنيه يا بشمهندستي 🌟</h2>
+    <textarea id="wishInput" placeholder="اكتبي امنيتك هنا... ✨"></textarea>
+    <button id="sendBtn" onclick="sendWish()">يارب تتحقق 🤲</button>
+    <div id="wishDone">🌙 امنيتك وصلت للنجوم ✨<br><small style="font-size:1rem;color:#880e4f">كل سنه وانتي كيبه يا جنجونتي 💗</small></div>
+  </div>
+</div>
+
+<button id="musicBtn" onclick="toggleMusic()">🎵</button>
+
+<!-- ساوند الواجهة — يشتغل من الأول ويقفل لما تطفي الشمعة -->
+<audio id="audioIntro" loop>
+  <source src="intro.m4a" type="audio/mp4"/>
+</audio>
+
+<!-- الفويس بتاعك أولاً، بعدين أغنية نانسي -->
+<audio id="audio1">
+  <source src="voice.ogg" type="audio/ogg"/>
+</audio>
+<audio id="audio2">
+  <source src="nancy.mp3" type="audio/mpeg"/>
+</audio>
+
+<!-- PAGE 2 -->
+<div id="page2">
+  <div class="bunting">
+    <svg viewBox="0 0 800 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <line x1="0" y1="10" x2="800" y2="10" stroke="#feca57" stroke-width="2"/>
+      <polygon points="50,10 70,10 60,40" fill="#ff6b6b"/>
+      <polygon points="100,10 120,10 110,40" fill="#feca57"/>
+      <polygon points="150,10 170,10 160,40" fill="#48dbfb"/>
+      <polygon points="200,10 220,10 210,40" fill="#ff9ff3"/>
+      <polygon points="250,10 270,10 260,40" fill="#54a0ff"/>
+      <polygon points="300,10 320,10 310,40" fill="#ff6b6b"/>
+      <polygon points="350,10 370,10 360,40" fill="#feca57"/>
+      <polygon points="400,10 420,10 410,40" fill="#48dbfb"/>
+      <polygon points="450,10 470,10 460,40" fill="#ff9ff3"/>
+      <polygon points="500,10 520,10 510,40" fill="#54a0ff"/>
+      <polygon points="550,10 570,10 560,40" fill="#ff6b6b"/>
+      <polygon points="600,10 620,10 610,40" fill="#feca57"/>
+      <polygon points="650,10 670,10 660,40" fill="#48dbfb"/>
+      <polygon points="700,10 720,10 710,40" fill="#ff9ff3"/>
+      <polygon points="750,10 770,10 760,40" fill="#54a0ff"/>
+    </svg>
+  </div>
+  <div class="hb-wrap">
+    <div style="position:relative;display:inline-block;">
+      <span class="hb-happy">Happy</span>
+      <span style="position:absolute;top:-20px;right:-30px;font-size:2.5rem;transform:rotate(20deg);">🎉</span>
+    </div>
+    <span class="hb-birthday">Birthday</span>
+  </div>
+  <div class="date-badge"><span>⭐</span> 26 JUNE <span>⭐</span></div>
+  <div class="profile-wrap">
+    <div class="profile-ring"></div>
+    <div class="profile-ring2"></div>
+    <div class="profile-circle">
+      <img src="jana.jpg" alt="Jana"/>
+    </div>
+    <div class="heart-float" style="top:-10px;left:-5px;animation-delay:0s">💗</div>
+    <div class="heart-float" style="top:-10px;right:-5px;animation-delay:.5s">💖</div>
+    <div class="heart-float" style="bottom:-5px;left:-10px;animation-delay:1s">💕</div>
+    <div class="heart-float" style="bottom:-5px;right:-10px;animation-delay:1.5s">💗</div>
+  </div>
+  <div class="msg-card">
+    <p class="msg-text">
+      كل سنه وانتي طيبه <span class="hl">ي احلا واجمل بنت عرفتها ف حياتي</span><br>
+      كل سنه وانتي معايا<br>
+      واشوفك ديما بتكبري قدامي<br>
+      وبتحققي كل اللي نفسك فيه ✨<br>
+      ويارب اشوفك احلا وانجح واحده ف الدنيااا 🤲<br><br>
+      <span style="font-size:1.4rem;font-weight:900;color:#e53935;font-family:'Tajawal',sans-serif;">بحبك يا جنجونتي 💝</span>
+    </p>
+    <div class="msg-hearts">💗 💖 💗 💖 💗</div>
+  </div>
+  <button id="goGameBtn" onclick="showPage3()" style="
+    margin:30px auto 20px;
+    padding:16px 45px;
+    font-family:'Fredoka One',cursive;
+    font-size:1.4rem;
+    background:linear-gradient(135deg,#e91e63,#ff80ab);
+    color:#fff;
+    border:none;border-radius:50px;
+    cursor:pointer;
+    box-shadow:0 6px 20px rgba(233,30,99,0.4);
+    display:block;
+    animation:heartbeat2 1.5s ease infinite;
+  ">🎮 تعالي نلعب شويه يا جنجونتي !</button>
+</div>
+
+<!-- PAGE 3 - GAME -->
+<div id="page3" style="
+  display:none;position:fixed;inset:0;
+  background:linear-gradient(135deg,#fce4ec,#f48fb1,#f06292);
+  background-size:400% 400%;
+  animation:gradientShift 8s ease infinite;
+  flex-direction:column;align-items:center;justify-content:flex-start;
+  overflow:hidden;z-index:200;
+">
+  <div style="text-align:center;padding:20px 10px 5px;z-index:2;position:relative;">
+    <div style="font-family:'Fredoka One',cursive;font-size:2rem;color:#fff;-webkit-text-stroke:1px #c2185b;text-shadow:0 2px 8px rgba(0,0,0,0.2);">اصطادي اسمك! 🎀</div>
+    <div style="font-family:'Tajawal',sans-serif;font-size:1rem;color:#fff;margin-top:4px;opacity:0.9;">اجمعي 8 اسامي جني 💗</div>
+    <div style="margin-top:8px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;" id="scoreHearts"></div>
+  </div>
+  <canvas id="gameCanvas" style="display:block;touch-action:none;z-index:1;"></canvas>
+</div>
+
+<!-- PAGE 4 - VIDEO -->
+<div id="page4" style="
+  display:none;position:fixed;inset:0;
+  background:#000;
+  flex-direction:column;align-items:center;justify-content:center;
+  z-index:300;
+">
+  <video id="birthdayVideo" controls playsinline style="max-width:100%;max-height:100%;width:100%;height:100%;object-fit:contain;">
+    <source src="ending.mp4" type="video/mp4"/>
+  </video>
+</div>
+
+<script>
+// roundRect polyfill for older browsers
+if(!CanvasRenderingContext2D.prototype.roundRect){
+  CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){
+    r=Math.min(r,w/2,h/2);
+    this.beginPath();
+    this.moveTo(x+r,y);
+    this.lineTo(x+w-r,y);
+    this.quadraticCurveTo(x+w,y,x+w,y+r);
+    this.lineTo(x+w,y+h-r);
+    this.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    this.lineTo(x+r,y+h);
+    this.quadraticCurveTo(x,y+h,x,y+h-r);
+    this.lineTo(x,y+r);
+    this.quadraticCurveTo(x,y,x+r,y);
+    this.closePath();
+  };
+}
+// CONFETTI
+const canvas=document.getElementById('c');
+const ctx=canvas.getContext('2d');
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;});
+
+const COLORS=['#e91e63','#f06292','#ffffff','#b71c1c','#ff80ab','#fce4ec','#c2185b','#ff4081'];
+let pieces=[];
+
+function spawnPiece(x,y){
+  pieces.push({
+    x:x??Math.random()*canvas.width,
+    y:y??-10,
+    w:Math.random()*10+4,
+    h:Math.random()*6+3,
+    color:COLORS[Math.floor(Math.random()*COLORS.length)],
+    rot:Math.random()*360,
+    rotSpeed:(Math.random()-0.5)*8,
+    vx:(Math.random()-0.5)*3,
+    vy:Math.random()*3+2,
+    alpha:1
+  });
+}
+
+function spawnRain(){
+  if(pieces.length<120) spawnPiece();
+  setTimeout(spawnRain,80);
+}
+spawnRain();
+
+function animateCanvas(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  pieces=pieces.filter(p=>p.alpha>0);
+  pieces.forEach(p=>{
+    p.x+=p.vx; p.y+=p.vy; p.rot+=p.rotSpeed;
+    if(p.y>canvas.height) p.alpha=0;
+    ctx.save();
+    ctx.globalAlpha=p.alpha;
+    ctx.translate(p.x,p.y);
+    ctx.rotate(p.rot*Math.PI/180);
+    ctx.fillStyle=p.color;
+    ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+    ctx.restore();
+  });
+  requestAnimationFrame(animateCanvas);
+}
+animateCanvas();
+
+// =============================================
+// INTRO CANVAS — تورتة 3 طبقات + دبانة
+// =============================================
+(function(){
+  const ic = document.getElementById('introCanvas');
+  const ix = ic.getContext('2d');
+  ic.width  = window.innerWidth;
+  ic.height = window.innerHeight;
+
+  const CX = ic.width/2;
+  const CY = ic.height/2;
+
+  const LAYERS = [
+    { w:180, h:58, r:12, y0:CY+30,  gFrom:'#f48fb1', gTo:'#c2185b', dots:['#fff','#fce4ec','#fff'], label:null },
+    { w:150, h:50, r:10, y0:CY-22,  gFrom:'#f06292', gTo:'#ad1457', dots:['#fff','#fff9c4','#fff'], label:'Jana' },
+    { w:118, h:42, r:8,  y0:CY-68,  gFrom:'#e91e63', gTo:'#880e4f', dots:['#fff','#fce4ec','#fff'], label:null },
+  ];
+  const CANDLE = { y0: CY-110, h:36 };
+
+  let layerProgress=[0,0,0], candleProgress=0;
+  let flameAlpha=0, flameFlicker=0;
+  let beePhase='wait', beeX=ic.width+80, beeY=ic.height*0.2;
+  let beeTargetX=CX, beeTargetY=CY-110-28;
+  let beeWingAngle=0, beeLandTimer=0, beeLit=false;
+  let introAlpha=1, done=false;
+
+  const T_L1=400, T_L2=1800, T_L3=3200, T_CANDLE=4600;
+  const T_BEE_FLY=5800, T_DONE=11800;
+  const DUR=1200;
+
+  // === AUDIO — placeholder لما يجي الساوند الجديد ===
+
+  let soundsFired=false;
+  function fireIntroSounds(){ soundsFired=true; }
+  ['click','touchstart','keydown'].forEach(e=>document.addEventListener(e,fireIntroSounds,{once:true}));
+
+  // === DRAW HELPERS ===
+  // easeOutCubic — ناعم بدون نطة
+  function easeOut(t){
+    t=Math.min(t,1);
+    return 1-Math.pow(1-t,3);
+  }
+
+  function rRect(cx,x,y,w,h,r,c1,c2){
+    const g=cx.createLinearGradient(x,y,x,y+h);
+    g.addColorStop(0,c1);g.addColorStop(1,c2);
+    cx.fillStyle=g;cx.beginPath();
+    cx.moveTo(x+r,y);cx.lineTo(x+w-r,y);cx.quadraticCurveTo(x+w,y,x+w,y+r);
+    cx.lineTo(x+w,y+h-r);cx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    cx.lineTo(x+r,y+h);cx.quadraticCurveTo(x,y+h,x,y+h-r);
+    cx.lineTo(x,y+r);cx.quadraticCurveTo(x,y,x+r,y);
+    cx.closePath();cx.fill();
+  }
+
+  function drawLayer(cx,layer,progress){
+    if(progress<=0) return;
+    const p=easeOut(progress);
+    const curY=(-300)+(layer.y0-(-300))*p;
+    const lx=CX-layer.w/2, ly=curY-layer.h/2;
+    cx.save();
+    cx.shadowColor='rgba(0,0,0,0.2)';cx.shadowBlur=12;cx.shadowOffsetY=5;
+    rRect(cx,lx,ly,layer.w,layer.h,layer.r,layer.gFrom,layer.gTo);
+    cx.shadowColor='transparent';
+    // موجة كريمة
+    cx.strokeStyle='rgba(255,255,255,0.45)';cx.lineWidth=2;cx.beginPath();
+    const steps=14;
+    for(let i=0;i<=steps;i++){
+      const px=lx+(layer.w/steps)*i;
+      const py=ly+9+Math.sin((i/steps)*Math.PI*2.5)*6;
+      i===0?cx.moveTo(px,py):cx.lineTo(px,py);
+    }
+    cx.stroke();
+    // زينة — نجوم وقلوب
+    const decoItems = ['✦','♥','✦','♥','✦'];
+    const decoColors = ['#fff9c4','#fff','#fce4ec','#fff','#fff9c4'];
+    decoItems.forEach((sym,i)=>{
+      const dx = lx + layer.w*(0.1 + i*0.2);
+      const dy = ly + layer.h*0.62;
+      cx.save();
+      cx.font = `bold ${layer.h*0.28}px serif`;
+      cx.fillStyle = decoColors[i];
+      cx.globalAlpha = 0.88;
+      cx.textAlign = 'center';
+      cx.textBaseline = 'middle';
+      cx.fillText(sym, dx, dy);
+      cx.restore();
+    });
+    if(layer.label){
+      cx.font="italic 15px 'Great Vibes',cursive";
+      cx.fillStyle='rgba(255,255,255,0.9)';cx.textAlign='center';
+      cx.fillText(layer.label,CX,ly+layer.h*0.72);
+    }
+    cx.restore();
+  }
+
+  function drawCandle(cx,progress){
+    if(progress<=0) return;
+    const p=easeOut(progress);
+    const curY=(-300)+(CANDLE.y0-(-300))*p;
+    cx.save();
+    const g=cx.createLinearGradient(CX-7,curY,CX+7,curY);
+    g.addColorStop(0,'#fff9c4');g.addColorStop(1,'#ffe082');
+    cx.fillStyle=g;cx.beginPath();
+    cx.roundRect(CX-7,curY,14,CANDLE.h,3);cx.fill();
+    cx.strokeStyle='#f48fb1';cx.lineWidth=1.2;cx.stroke();
+    for(let i=1;i<=3;i++){
+      cx.strokeStyle='rgba(255,204,128,0.55)';cx.lineWidth=1;
+      cx.beginPath();cx.moveTo(CX-7,curY+i*9);cx.lineTo(CX+7,curY+i*9);cx.stroke();
+    }
+    cx.restore();
+  }
+
+  function drawFlame(cx,alpha,flicker){
+    if(alpha<=0||candleProgress<0.8) return;
+    const fy=CANDLE.y0-14+Math.sin(flicker*0.18)*2;
+    const sy=1+Math.sin(flicker*0.25)*0.12, sx=1+Math.cos(flicker*0.2)*0.06;
+    cx.save();cx.globalAlpha=alpha;
+    cx.filter=`drop-shadow(0 0 8px #FFA726) drop-shadow(0 0 4px #ff6b00)`;
+    cx.translate(CX,fy);cx.scale(sx,sy);
+    cx.beginPath();cx.ellipse(0,0,6,11,0,0,Math.PI*2);cx.fillStyle='#FFA726';cx.fill();
+    cx.beginPath();cx.ellipse(0,2,3.5,6,0,0,Math.PI*2);cx.fillStyle='#FFF176';cx.fill();
+    cx.beginPath();cx.ellipse(0,4,1.5,3,0,0,Math.PI*2);cx.fillStyle='rgba(255,255,255,0.85)';cx.fill();
+    cx.restore();
+  }
+
+  function drawBee(cx,bx,by,wing){
+    cx.save();cx.translate(bx,by);
+    // جسم
+    const bg=cx.createLinearGradient(-12,-8,12,8);
+    bg.addColorStop(0,'#ffd600');bg.addColorStop(1,'#f57f17');
+    cx.fillStyle=bg;cx.beginPath();cx.ellipse(0,0,12,8,0,0,Math.PI*2);cx.fill();
+    cx.strokeStyle='#333';cx.lineWidth=1.2;cx.stroke();
+    [-5,0,5].forEach(bx2=>{
+      cx.beginPath();cx.moveTo(bx2,-8);cx.lineTo(bx2,8);
+      cx.strokeStyle='rgba(0,0,0,0.45)';cx.lineWidth=1.8;cx.stroke();
+    });
+    // أجنحة
+    [-1,1].forEach(side=>{
+      cx.save();cx.rotate(wing*side);
+      cx.beginPath();cx.ellipse(side*6,-12,10,6,side*0.4,0,Math.PI*2);
+      cx.fillStyle='rgba(200,230,255,0.75)';
+      cx.strokeStyle='rgba(100,180,255,0.6)';cx.lineWidth=1;
+      cx.fill();cx.stroke();cx.restore();
+    });
+    // رأس
+    cx.beginPath();cx.arc(12,0,6,0,Math.PI*2);cx.fillStyle='#333';cx.fill();
+    cx.beginPath();cx.arc(14,-2,1.5,0,Math.PI*2);cx.fillStyle='white';cx.fill();
+    cx.restore();
+  }
+
+  // === MAIN LOOP ===
+  let startT=null;
+  function introLoop(ts){
+    if(!startT) startT=ts;
+    const el=ts-startT;
+    ix.clearRect(0,0,ic.width,ic.height);
+
+    layerProgress[0]=Math.max(0,Math.min(1,(el-T_L1)/DUR));
+    layerProgress[1]=Math.max(0,Math.min(1,(el-T_L2)/DUR));
+    layerProgress[2]=Math.max(0,Math.min(1,(el-T_L3)/DUR));
+    candleProgress  =Math.max(0,Math.min(1,(el-T_CANDLE)/900));
+
+    // ظل القاعدة
+    if(layerProgress[0]>0.5){
+      ix.save();ix.beginPath();
+      ix.ellipse(CX,LAYERS[0].y0+LAYERS[0].h/2+12,88,9,0,0,Math.PI*2);
+      ix.fillStyle='rgba(248,187,208,0.5)';ix.fill();ix.restore();
+    }
+
+    drawLayer(ix,LAYERS[0],layerProgress[0]);
+    if(layerProgress[0]>0.2) drawLayer(ix,LAYERS[1],layerProgress[1]);
+    if(layerProgress[1]>0.2) drawLayer(ix,LAYERS[2],layerProgress[2]);
+    if(candleProgress>0)     drawCandle(ix,candleProgress);
+
+    // الدبانة
+    beeWingAngle=Math.sin(ts*0.03)*0.45;
+
+    if(el>=T_BEE_FLY && beePhase==='wait'){
+      beePhase='fly-in';
+    }
+    if(beePhase==='fly-in'){
+      beeX+=(beeTargetX-beeX)*0.035;
+      beeY+=(beeTargetY-beeY)*0.035;
+      if(Math.abs(beeX-beeTargetX)<4&&Math.abs(beeY-beeTargetY)<4){
+        beePhase='land'; beeLandTimer=el;
+      }
+    }
+    if(beePhase==='land'){
+      beeX=beeTargetX+Math.sin(el*0.04)*3;
+      beeY=beeTargetY+Math.cos(el*0.05)*2;
+      if(el-beeLandTimer>1000) beePhase='light';
+    }
+    if(beePhase==='light'){
+      if(!beeLit){ beeLit=true; }
+      flameAlpha=Math.min(1,flameAlpha+0.035);
+      flameFlicker++;
+      if(flameAlpha>=1) beePhase='fly-out';
+    }
+    if(beePhase==='fly-out'){
+      flameFlicker++;
+      beeX+=7; beeY-=2.5;
+    }
+
+    if(flameAlpha>0) drawFlame(ix,flameAlpha,flameFlicker);
+    if(el>=T_BEE_FLY&&beeX<ic.width+120) drawBee(ix,beeX,beeY,beeWingAngle);
+
+    // fade out
+    if(el>=T_DONE){
+      introAlpha=Math.max(0,introAlpha-0.025);
+      ic.style.opacity=introAlpha;
+      if(introAlpha<=0&&!done){
+        done=true; ic.style.display='none';
+        const scene=document.getElementById('scene');
+        scene.style.transition='opacity 1s ease';
+        scene.style.opacity='0'; scene.style.pointerEvents='auto';
+        setTimeout(()=>{ scene.style.opacity='1'; },50);
+        // شغل ساوند الواجهة
+        document.getElementById('audioIntro').play().catch(()=>{});
+        setTimeout(()=>{
+          typeWriter(document.getElementById('bdayText'),'Happy 16th Birthday!',75,()=>{
+            typeWriter(document.getElementById('nameText'),'Jana 🌸',90,null);
+          });
+        },700);
+        setTimeout(()=>{ document.getElementById('countWrap').style.opacity='1'; },3200);
+        setTimeout(()=>{ startCountdown(); },3700);
+        return;
+      }
+    }
+    if(!done) requestAnimationFrame(introLoop);
+  }
+  window._startIntro = ()=>{ requestAnimationFrame(introLoop); };
+})();
+
+function startExperience(){
+  document.getElementById('startScreen').style.display='none';
+  // شغل الساوند
+  document.getElementById('audioIntro').play().catch(()=>{});
+  // ابدأ الإنترو
+  if(window._startIntro) window._startIntro();
+}
+
+// ============ START SCREEN ANIMATION ============
+(function(){
+  const sc = document.getElementById('startCanvas');
+  sc.width = window.innerWidth;
+  sc.height = window.innerHeight;
+  const sx = sc.getContext('2d');
+
+  // كونفيتي خاص بالشاشة الأولى
+  const SC_COLORS=['#fff','#fce4ec','#f48fb1','#fff9c4','#f3e5f5','#e1f5fe'];
+  let sParticles=[];
+  function spawnS(){
+    sParticles.push({
+      x:Math.random()*sc.width, y:-10,
+      w:Math.random()*10+4, h:Math.random()*6+3,
+      color:SC_COLORS[Math.floor(Math.random()*SC_COLORS.length)],
+      rot:Math.random()*360, rotSpeed:(Math.random()-0.5)*6,
+      vx:(Math.random()-0.5)*2, vy:Math.random()*2+1.5,
+      alpha:1
+    });
+  }
+  function loopS(){
+    if(!document.getElementById('startScreen') ||
+       document.getElementById('startScreen').style.display==='none') return;
+    if(sParticles.length<80) spawnS();
+    sx.clearRect(0,0,sc.width,sc.height);
+    sParticles=sParticles.filter(p=>p.alpha>0);
+    sParticles.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy; p.rot+=p.rotSpeed;
+      if(p.y>sc.height) p.alpha=0;
+      sx.save();
+      sx.globalAlpha=p.alpha*0.7;
+      sx.translate(p.x,p.y);
+      sx.rotate(p.rot*Math.PI/180);
+      sx.fillStyle=p.color;
+      sx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+      sx.restore();
+    });
+    requestAnimationFrame(loopS);
+  }
+  loopS();
+
+  // typewriter النص
+  const msg = 'إيه رأيك نحضر التورتة بتاعت\nأجمل بنوتة في الدنيا ؟ 🌸';
+  const el = document.getElementById('startTyped');
+  const btn = document.getElementById('startBtn');
+  let i=0;
+  function tick(){
+    if(i<=msg.length){
+      el.innerHTML = msg.slice(0,i).replace(/\n/g,'<br>');
+      i++;
+      setTimeout(tick, i<20 ? 60 : 55);
+    } else {
+      // ظهور الزرار بعد ما الكلام يخلص
+      setTimeout(()=>{ btn.style.opacity='1'; }, 400);
+    }
+  }
+  // ابدأ الكتابة بعد ثانية
+  setTimeout(tick, 900);
+})();
+
+function typeWriter(el,text,speed,cb){
+  el.style.opacity='1'; el.classList.add('show');
+  let i=0;
+  function tick(){ if(i<=text.length){el.textContent=text.slice(0,i);i++;setTimeout(tick,speed);}else if(cb)cb(); }
+  tick();
+}
+
+function startCountdown(){
+  let count=5;
+  const countEl=document.getElementById('countNum');
+  const countWrap=document.getElementById('countWrap');
+  const timer=setInterval(()=>{
+    count--;
+    countEl.style.transform='scale(1.3)';
+    setTimeout(()=>countEl.style.transform='scale(1)',200);
+    if(count<=0){
+      clearInterval(timer);
+      countEl.textContent='💨';
+      setTimeout(()=>{ countWrap.style.display='none'; document.getElementById('blowBtn').style.display='block'; },400);
+    } else { countEl.textContent=count; }
+  },1000);
+}
+
+// BLOW CANDLE — راجل بالبارشوت بينزل ويطفي الشمعة
+function blowCandle(){
+  // إخفاء الزرار فوراً
+  document.getElementById('blowBtn').style.display='none';
+
+  // وقف ساوند الواجهة وابدأ ساوند جنا
+  const introAudio = document.getElementById('audioIntro');
+  introAudio.pause();
+  introAudio.currentTime = 0;
+
+  // شغل الموسيقى
+  startMusic();
+
+  // ابدأ أنيميشن الراجل بالبارشوت
+  runFirefighter(()=>{
+    // بعد ما يخلص — أظهر wish section
+    document.getElementById('wishSection').classList.add('show');
+  });
+}
+
+function runFirefighter(onDone){
+  const fc = document.createElement('canvas');
+  fc.style.cssText = 'position:fixed;inset:0;z-index:99;pointer-events:none;';
+  fc.width = window.innerWidth;
+  fc.height = window.innerHeight;
+  document.body.appendChild(fc);
+  const fx = fc.getContext('2d');
+
+  const CX = fc.width/2;
+  // موقع الشمعة التقريبي على الشاشة (مركز العنصر)
+  const cakeEl = document.getElementById('cakeWrap');
+  const rect = cakeEl.getBoundingClientRect();
+  const candleX = rect.left + rect.width/2;
+  const candleY = rect.top + 20; // رأس الشمعة
+
+  let manX = CX;
+  let manY = -120;       // يبدأ من فوق
+  const targetY = candleY - 60; // يوقف فوق الشمعة
+  let phase = 'fall';   // fall → spray → rise → done
+  let phaseT = 0;
+  let flameVisible = true;
+  let waterParticles = [];
+  let startT = null;
+  let chuteSway = 0;
+
+  // صوت مياه — محذوف (بيجي ساوند جديد)
+
+  function drawParachute(cx, x, y, sway){
+    cx.save();
+    cx.translate(x, y);
+
+    // قبة البارشوت
+    const grad = cx.createRadialGradient(-10,-40,5,0,-30,55);
+    grad.addColorStop(0,'#ff80ab'); grad.addColorStop(1,'#c2185b');
+    cx.fillStyle = grad;
+    cx.beginPath();
+    cx.arc(0,-40,45, Math.PI, 0);
+    cx.closePath();
+    cx.fill();
+    cx.strokeStyle='#880e4f'; cx.lineWidth=1.5; cx.stroke();
+
+    // خطوط البارشوت
+    const lines=[[-40,-40],[-20,-40],[0,-40],[20,-40],[40,-40]];
+    lines.forEach(([lx])=>{
+      cx.beginPath(); cx.moveTo(lx,-42); cx.lineTo(0,0);
+      cx.strokeStyle='rgba(136,14,79,0.5)'; cx.lineWidth=1; cx.stroke();
+    });
+    // خطوط زينة على القبة
+    cx.strokeStyle='rgba(255,255,255,0.3)'; cx.lineWidth=2;
+    for(let i=1;i<=4;i++){
+      cx.beginPath();
+      cx.arc(0,-40, i*10, Math.PI, 0);
+      cx.stroke();
+    }
+
+    // جسم الراجل
+    // رجلين
+    cx.strokeStyle='#5d4037'; cx.lineWidth=3;
+    cx.beginPath(); cx.moveTo(-5,30); cx.lineTo(-8,50); cx.stroke();
+    cx.beginPath(); cx.moveTo(5,30); cx.lineTo(8,50); cx.stroke();
+    // حذاء
+    cx.fillStyle='#333';
+    cx.beginPath(); cx.ellipse(-9,51,5,3,0,0,Math.PI*2); cx.fill();
+    cx.beginPath(); cx.ellipse(9,51,5,3,0,0,Math.PI*2); cx.fill();
+    // جسم
+    cx.fillStyle='#1565c0';
+    cx.beginPath(); cx.roundRect(-12,0,24,32,4); cx.fill();
+    // ذراع يمسك الخرطوم
+    cx.strokeStyle='#5d4037'; cx.lineWidth=3;
+    cx.beginPath(); cx.moveTo(12,10); cx.lineTo(28,20); cx.stroke();
+    // الخرطوم
+    cx.strokeStyle='#4caf50'; cx.lineWidth=4; cx.lineCap='round';
+    cx.beginPath(); cx.moveTo(28,20); cx.quadraticCurveTo(50,10,55,-5); cx.stroke();
+    // رأس
+    cx.fillStyle='#ffcc80';
+    cx.beginPath(); cx.arc(0,-12,11,0,Math.PI*2); cx.fill();
+    // خوذة
+    cx.fillStyle='#f44336';
+    cx.beginPath(); cx.arc(0,-14,11,Math.PI,0); cx.fill();
+    cx.fillStyle='#d32f2f';
+    cx.fillRect(-11,-14,22,4);
+    // عيون
+    cx.fillStyle='#333';
+    cx.beginPath(); cx.arc(-4,-12,2,0,Math.PI*2); cx.fill();
+    cx.beginPath(); cx.arc(4,-12,2,0,Math.PI*2); cx.fill();
+
+    cx.restore();
+  }
+
+  function spawnWater(){
+    const hoseX = manX + 55;
+    const hoseY = manY - 5;
+    for(let i=0;i<5;i++){
+      waterParticles.push({
+        x: hoseX + Math.random()*8,
+        y: hoseY + (Math.random()-0.5)*6,
+        vx: 1.5+Math.random()*2,
+        vy: -1+Math.random()*2,
+        life:1, r:3+Math.random()*3
+      });
+    }
+  }
+
+  function loop(ts){
+    if(!startT) startT=ts;
+    const elapsed = ts-startT;
+    fx.clearRect(0,0,fc.width,fc.height);
+    chuteSway = Math.sin(elapsed*0.003)*3;
+
+    if(phase==='fall'){
+      manY += (targetY - manY) * 0.04;
+      if(Math.abs(manY-targetY)<2){ manY=targetY; phase='spray'; phaseT=elapsed; }
+    }
+
+    if(phase==='spray'){
+      const t=elapsed-phaseT;
+      if(t>150) spawnWater();
+      if(t>600){
+        // أطفئ اللهب
+        if(flameVisible){
+          flameVisible=false;
+          document.getElementById('flame').style.display='none';
+          // confetti صغير
+          for(let i=0;i<40;i++) setTimeout(()=>spawnPiece(candleX+(Math.random()-0.5)*100, candleY),i*20);
+        }
+      }
+      if(t>1800){ phase='rise'; phaseT=elapsed; }
+    }
+
+    if(phase==='rise'){
+      manY -= 4;
+      if(manY < -150){ phase='done'; }
+    }
+
+    if(phase==='done'){
+      fc.remove();
+      onDone();
+      return;
+    }
+
+    // رسم جزيئات الماء
+    waterParticles = waterParticles.filter(p=>p.life>0);
+    waterParticles.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy; p.vy+=0.15; p.life-=0.04;
+      fx.save();
+      fx.globalAlpha=Math.max(0,p.life);
+      fx.fillStyle='#29b6f6';
+      fx.beginPath();
+      fx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      fx.fill();
+      fx.restore();
+    });
+
+    // رسم الراجل
+    drawParachute(fx, manX+chuteSway, manY, chuteSway);
+
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+}
+
+// SEND WISH
+function sendWish(){
+  const v=document.getElementById('wishInput').value.trim();
+  if(!v) return;
+  document.getElementById('wishInput').style.display='none';
+  document.getElementById('sendBtn').style.display='none';
+  document.getElementById('wishDone').style.display='block';
+  for(let i=0;i<80;i++) setTimeout(()=>spawnPiece(),i*30);
+  setTimeout(()=>showPage2(), 2500);
+}
+
+// PAGE 2
+function showPage2(){
+  document.getElementById('scene').style.display='none';
+  document.getElementById('page2').classList.add('show');
+}
+
+// PAGE 3 — GAME
+function showPage3(){
+  document.getElementById('page2').style.display='none';
+  const p3=document.getElementById('page3');
+  p3.style.display='flex';
+  startGame();
+}
+
+// PAGE 4 — VIDEO
+function showPage4(){
+  document.getElementById('page3').style.display='none';
+  // وقف كل الصوت
+  a1.pause(); a2.pause();
+  playing=false;
+  document.getElementById('musicBtn').textContent='🎵';
+  const p4=document.getElementById('page4');
+  p4.style.display='flex';
+  document.getElementById('birthdayVideo').play().catch(()=>{});
+}
+
+// ============ GAME ============
+const TARGET=8;
+
+function startGame(){
+  const gc=document.getElementById('gameCanvas');
+  const theader=document.getElementById('scoreHearts');
+  gc.width=window.innerWidth;
+  gc.height=window.innerHeight-120;
+
+  // score hearts display
+  theader.innerHTML='';
+  for(let i=0;i<TARGET;i++){
+    const h=document.createElement('span');
+    h.style.cssText='font-size:1.6rem;transition:transform .2s;';
+    h.textContent='🤍';
+    h.id='heart_'+i;
+    theader.appendChild(h);
+  }
+
+  const gctx=gc.getContext('2d');
+
+  // basket
+  const BASKET_W=90, BASKET_H=50;
+  let basketX=gc.width/2 - BASKET_W/2;
+  const basketY=gc.height - BASKET_H - 10;
+  let score=0;
+
+  // falling names
+  let items=[];
+  let lastSpawn=0;
+  let spawnInterval=1400;
+
+  function spawnItem(){
+    // كل ما score بيزيد، نسبة الأسامي الغلط بتزيد
+    // عند score=0: 20% غلط، عند score=7: 70% غلط
+    const wrongChance = 0.2 + (score / TARGET) * 0.5;
+    const isTarget = Math.random() > wrongChance;
+    let name;
+    if(isTarget){
+      name = Math.random()<0.5 ? 'جنا' : 'جني';
+    } else {
+      const wrongNames=['سارة','مها','نور','لمى','ريم','دينا','هنا','مي','رنا','ليلى'];
+      name = wrongNames[Math.floor(Math.random()*wrongNames.length)];
+    }
+    items.push({
+      x: Math.random()*(gc.width-60)+30,
+      y: -30,
+      name,
+      isTarget,
+      speed: 2.5 + Math.random()*2,
+      fontSize: 22,
+      alpha:1,
+      caught:false,
+      missed:false,
+      pop:0
+    });
+  }
+
+  // touch / mouse control
+  let touching=false;
+  let mouseDragging=false;
+
+  gc.addEventListener('touchstart',e=>{touching=true;},{ passive:true });
+  gc.addEventListener('touchend',e=>{touching=false;},{ passive:true });
+  gc.addEventListener('touchmove',e=>{
+    e.preventDefault();
+    const rect=gc.getBoundingClientRect();
+    const tx=e.touches[0].clientX - rect.left;
+    basketX = Math.max(0, Math.min(gc.width-BASKET_W, tx - BASKET_W/2));
+  },{ passive:false });
+
+  // mouse drag
+  gc.addEventListener('mousedown',e=>{ mouseDragging=true; });
+  window.addEventListener('mouseup',e=>{ mouseDragging=false; });
+  window.addEventListener('mousemove',e=>{
+    if(!mouseDragging) return;
+    const rect=gc.getBoundingClientRect();
+    basketX = Math.max(0, Math.min(gc.width-BASKET_W, e.clientX - rect.left - BASKET_W/2));
+  });
+
+  // keyboard support
+  let keys={};
+  window.addEventListener('keydown',e=>keys[e.key]=true);
+  window.addEventListener('keyup',e=>keys[e.key]=false);
+
+  let gameRunning=true;
+  let lastTime=0;
+
+  function gameLoop(ts){
+    if(!gameRunning) return;
+    const dt=ts-lastTime; lastTime=ts;
+
+    // keyboard move
+    if(keys['ArrowLeft']) basketX=Math.max(0,basketX-8);
+    if(keys['ArrowRight']) basketX=Math.min(gc.width-BASKET_W,basketX+8);
+
+    // spawn
+    if(ts-lastSpawn > spawnInterval){
+      spawnItem();
+      lastSpawn=ts;
+      if(spawnInterval>700) spawnInterval-=15;
+    }
+
+    gctx.clearRect(0,0,gc.width,gc.height);
+
+    // draw basket
+    gctx.save();
+    // basket body
+    gctx.fillStyle='#c2185b';
+    gctx.beginPath();
+    gctx.roundRect(basketX, basketY, BASKET_W, BASKET_H, 12);
+    gctx.fill();
+    // basket rim
+    gctx.fillStyle='#e91e63';
+    gctx.beginPath();
+    gctx.roundRect(basketX-4, basketY-8, BASKET_W+8, 18, 9);
+    gctx.fill();
+    // basket emoji
+    gctx.font='22px serif';
+    gctx.textAlign='center';
+    gctx.fillText('🎀', basketX+BASKET_W/2, basketY+32);
+    gctx.restore();
+
+    // update & draw items
+    items=items.filter(it=>it.alpha>0);
+    items.forEach(it=>{
+      if(!it.caught) it.y += it.speed;
+
+      // check catch
+      if(!it.caught && !it.missed){
+        const inX = it.x > basketX-10 && it.x < basketX+BASKET_W+10;
+        const inY = it.y+it.fontSize > basketY && it.y < basketY+BASKET_H;
+        if(inX && inY){
+          it.caught=true;
+          it.pop=1;
+          if(it.isTarget){
+            score++;
+            document.getElementById('heart_'+(score-1)).textContent='💗';
+            document.getElementById('heart_'+(score-1)).style.transform='scale(1.4)';
+            setTimeout(()=>{
+              const h=document.getElementById('heart_'+(score-1));
+              if(h) h.style.transform='scale(1)';
+            },300);
+            if(score>=TARGET){
+              gameRunning=false;
+              setTimeout(()=>gameWon(gc),600);
+              return;
+            }
+          }
+        }
+        if(it.y > gc.height+10) it.alpha=0;
+      }
+
+      if(it.caught){
+        it.pop -= 0.05;
+        it.alpha -= 0.06;
+        it.y -= 2;
+      }
+
+      // draw name
+      gctx.save();
+      gctx.globalAlpha=Math.max(0,it.alpha);
+      const scale = it.caught ? 1+it.pop*0.5 : 1;
+      gctx.translate(it.x, it.y);
+      gctx.scale(scale,scale);
+
+      // pill background
+      gctx.font=`bold ${it.fontSize}px 'Tajawal', sans-serif`;
+      const tw=gctx.measureText(it.name).width;
+      const pad=10;
+      if(it.isTarget){
+        gctx.fillStyle=it.caught?'#ffd700':'#e91e63';
+      } else {
+        gctx.fillStyle='rgba(255,255,255,0.6)';
+      }
+      gctx.beginPath();
+      gctx.roundRect(-tw/2-pad, -it.fontSize, tw+pad*2, it.fontSize+10, 8);
+      gctx.fill();
+
+      gctx.fillStyle=it.isTarget?'#fff':'#c2185b';
+      gctx.textAlign='center';
+      gctx.fillText(it.name, 0, 0);
+      gctx.restore();
+    });
+
+    requestAnimationFrame(gameLoop);
+  }
+  requestAnimationFrame(t=>{lastTime=t; gameLoop(t);});
+}
+
+function gameWon(gc){
+  const gctx=gc.getContext('2d');
+  gctx.clearRect(0,0,gc.width,gc.height);
+
+  // celebration confetti burst
+  for(let i=0;i<100;i++) setTimeout(()=>spawnPiece(),i*25);
+
+  // overlay
+  const overlay=document.createElement('div');
+  overlay.style.cssText=`
+    position:absolute;inset:0;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:rgba(255,182,193,0.85);
+    backdrop-filter:blur(6px);
+    z-index:10;
+    animation:fadeUp .6s ease forwards;
+  `;
+  overlay.innerHTML=`
+    <div style="font-size:4rem;animation:heartbeat2 1s ease infinite;">🎉</div>
+    <div style="font-family:'Fredoka One',cursive;font-size:2.2rem;color:#b71c1c;margin-top:10px;text-align:center;">برافو عليكي يا جنجونتي!</div>
+    <div style="font-family:'Tajawal',sans-serif;font-size:1.1rem;color:#880e4f;margin-top:8px;text-align:center;">جمعتي كل اسامك 💗</div>
+    <button onclick="showPage4()" style="
+      margin-top:25px;
+      padding:16px 45px;
+      font-family:'Fredoka One',cursive;
+      font-size:1.4rem;
+      background:linear-gradient(135deg,#e91e63,#ff80ab);
+      color:#fff;border:none;border-radius:50px;cursor:pointer;
+      box-shadow:0 6px 20px rgba(233,30,99,0.4);
+    ">💝 بحبك !</button>
+  `;
+  document.getElementById('page3').appendChild(overlay);
+}
+
+// MUSIC — فويس أول، بعدين نانسي
+let playing=false;
+const a1=document.getElementById('audio1');
+const a2=document.getElementById('audio2');
+const aIntro=document.getElementById('audioIntro');
+
+a1.addEventListener('ended',()=>{
+  a2.currentTime=20;
+  a2.play().catch(()=>{});
+  document.getElementById('musicBtn').textContent='🔊';
+});
+
+function startMusic(){
+  // وقف ساوند الواجهة
+  aIntro.pause();
+  aIntro.currentTime=0;
+  // شغل الفويس
+  a1.play().catch(()=>{});
+  playing=true;
+  document.getElementById('musicBtn').textContent='🔊';
+}
+
+function toggleMusic(){
+  if(playing){
+    aIntro.pause();
+    a1.pause(); a2.pause();
+    document.getElementById('musicBtn').textContent='🎵';
+    playing=false;
+  } else {
+    // لو لسه في مرحلة الواجهة
+    if(!a1.ended && a1.paused && a1.currentTime===0){
+      aIntro.play().catch(()=>{});
+    } else if(a1.ended){
+      a2.play().catch(()=>{});
+    } else {
+      a1.play().catch(()=>{});
+    }
+    document.getElementById('musicBtn').textContent='🔊';
+    playing=true;
+  }
+}
+</script>
+</body>
+</html>
